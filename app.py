@@ -7,6 +7,8 @@ from plotly.graph_objs import *
 from flask import Flask
 import numpy as np
 import math
+server = Flask('my app')
+server.secret_key = os.environ.get('secret_key', 'secret')
 
 wind = []
 windError = []
@@ -16,7 +18,7 @@ count = 0
 windCount = 0
 speedCount = 0
 
-app = dash.Dash('streaming-wind-app')
+app = dash.Dash('streaming-wind-app', server=server)
 
 app.layout = html.Div([
     html.Div([

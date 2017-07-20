@@ -7,8 +7,6 @@ from plotly.graph_objs import *
 from flask import Flask
 import numpy as np
 import math
-import plotly.figure_factory as ff
-from scipy.optimize import curve_fit
 
 wind = []
 windError = []

@@ -8,7 +8,7 @@ from flask import Flask
 import numpy as np
 import math
 server = Flask('my app')
-server.secret_key = os.environ.get('secret_key', 'secret')
+server.secret_key = 'secret'
 
 wind = []
 windError = []

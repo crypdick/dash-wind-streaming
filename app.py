@@ -231,7 +231,6 @@ def gen_wind_speed():
             showgrid=False,
             showline=False,
             zeroline=False,
-            ticks=range(-100, 0),
             title='Time Elapsed (sec)'
         ),
         yaxis=dict(

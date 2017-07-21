@@ -332,7 +332,7 @@ def gen_wind_direction(oldFigure):
         orientation=270,
     )
 
-    return dict(data=[trace, trace1], layout=layout)
+    return dict(data=[trace, trace1, trace2], layout=layout)
 
 
 @app.callback(Output('wind-histogram', 'figure'),

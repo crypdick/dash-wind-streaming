@@ -224,12 +224,17 @@ def gen_wind_speed(oldFigure):
     else:
         prevVal = int(round(windVal[-1]))
 
+
+
     windVal.append(abs(np.random.normal(prevVal, 2, 1)[0]))
     windError.append(abs(np.random.normal(round(prevVal/10), 1)))
     if (len(windVal)>202):
         print("We here")
         windVal = windVal[1:]
         windError = windError[1:]
+        print(windVal[-3])
+
+    print(len(windVal))
 
     trace = Scatter(
         y=windVal,
@@ -278,24 +283,32 @@ def gen_wind_direction(oldFigure):
     global count
     global windOrientation
 
-    if(count == 199):
+    if(count == 194):
         count = 0
     else:
         count = count + 1
 
     val = windVal[-3]
-    trace1 = Area(
-        r=[val-10],
-        t=np.full(5, windOrientation[count]),
-        marker=dict(
-            color='#f8eff9'
-        )
-    )
+
     trace = Area(
-        r=[val],
+        r=np.full(5, val),
         t=np.full(5, windOrientation[count]),
         marker=dict(
             color='rgb(242, 196, 247)'
+        )
+    )
+    trace1 = Area(
+        r=np.full(5, val-5),
+        t=np.full(5, windOrientation[count]),
+        marker=dict(
+            color='#F6D7F9'
+        )
+    )
+    trace2 = Area(
+        r=np.full(5, val-10),
+        t=np.full(5, windOrientation[count]),
+        marker=dict(
+            color='#FFFFFF'
         )
     )
     layout = Layout(
@@ -310,10 +323,15 @@ def gen_wind_direction(oldFigure):
         ),
         showlegend=False,
         radialaxis=dict(
-            range=[0, max(max(windVal), 35)]
+            tickcolor='white',
+            range=[0, max(max(windVal), 40)]
+        ),
+        angularaxis=dict(
+            tickcolor='white'
         ),
         orientation=270,
     )
+
     return dict(data=[trace, trace1], layout=layout)
 
 

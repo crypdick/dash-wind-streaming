@@ -7,8 +7,10 @@ from plotly.graph_objs import *
 from flask import Flask
 import numpy as np
 import math
+import os
 server = Flask('my app')
 server.secret_key = 'secret'
+from flask_caching import  Cache
 
 wind = []
 windError = []
@@ -19,6 +21,12 @@ windCount = 0
 speedCount = 0
 
 app = dash.Dash('streaming-wind-app', server=server)
+
+cache = Cache(app.server, config={
+    'CACHE_TYPE': 'redis',
+    'CACHE_REDIS_URL': os.environ.get('REDIS_URL',  '')
+})
+app.config.supress_callback_exceptions = True
 
 app.layout = html.Div([
     html.Div([
@@ -183,6 +191,8 @@ app.layout = html.Div([
               'marginLeft': 'auto', 'marginRight': 'auto', "width": "1000px",
               'boxShadow': '0px 0px 5px 5px rgba(204,204,204,0.4)'})
 
+
+@cache.memoize(timeout=1)
 @app.callback(Output('wind-speed', 'figure'), [], [],
               [Event('wind-speed-update', 'interval')])
 def gen_wind_speed():
@@ -248,7 +258,7 @@ def gen_wind_speed():
 
     return dict(data=[trace], layout=layout)
 
-
+@cache.memoize(timeout=1)
 @app.callback(Output('wind-direction', 'figure'), [], [],
               [Event('wind-speed-update', 'interval')])
 def gen_wind_direction():
@@ -293,7 +303,7 @@ def gen_wind_direction():
     )
     return dict(data=[trace, trace1], layout=layout)
 
-
+@cache.memoize(timeout=1)
 @app.callback(Output('wind-histogram', 'figure'),
               [],
               [State('bin-slider', 'value'), State('bin-auto', 'values')],

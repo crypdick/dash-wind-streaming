@@ -185,7 +185,6 @@ app.layout = html.Div([
               'boxShadow': '0px 0px 5px 5px rgba(204,204,204,0.4)'})
 
 
-@ (timeout=10)
 @app.callback(Output('wind-speed', 'figure'), [],
               [State('wind-speed', 'figure')],
               [Event('wind-speed-update', 'interval')])
@@ -256,7 +255,7 @@ def gen_wind_speed(oldFigure):
 
     return dict(data=[trace], layout=layout)
 
-@ (timeout=10)
+
 @app.callback(Output('wind-direction', 'figure'), [],
               [State('wind-speed', 'figure')],
               [Event('wind-speed-update', 'interval')])

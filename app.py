@@ -35,8 +35,7 @@ app.layout = html.Div([
                     'color': 'white',
                     'marginLeft': '2%',
                     'padding-top': '10px',
-                    'display': 'inline-block',
-                    'font-family': 'Product Sans'
+                    'display': 'inline-block'
                 }
                 ),
         html.Img(src="https://cdn.rawgit.com/plotly/design-assets/master/logo/dash/images/dash-logo-by-plotly-stripe-inverted.png?token=ARkbw08LOFmsmBW_ibfg9DreRuh1YDxpks5ZejfPwA%3D%3D",
@@ -193,34 +192,41 @@ app.layout = html.Div([
 
 
 @cache.memoize(timeout=10)
-@app.callback(Output('wind-speed', 'figure'), [], [],
+@app.callback(Output('wind-speed', 'figure'), [],
+              [State('wind-speed', 'figure')],
               [Event('wind-speed-update', 'interval')])
-def gen_wind_speed():
+def gen_wind_speed(oldFigure):
     global wind
     global windError
     global windCount
     windCount = windCount + 1
-
-    if len(wind) == 0:
+    windVal = []
+    windError = []
+    if oldFigure is not None:
+        print(oldFigure['data'][0])
+        windVal = oldFigure['data'][0]['y']
+        windError = oldFigure['data'][0]['error_y']['array']
+        # windError = np
+    if len(windVal) == 0:
         prevVal = 20
-    elif(round(wind[-1]) > 40):
-        prevVal = int(math.floor(wind[-1]))
-    elif(round(wind[-1]) < 10):
-        prevVal = int(math.ceil(wind[-1]))
+    elif(round(windVal[-1]) > 40):
+        prevVal = int(math.floor(windVal[-1]))
+    elif(round(windVal[-1]) < 10):
+        prevVal = int(math.ceil(windVal[-1]))
     else:
-        prevVal = int(round(wind[-1]))
+        prevVal = int(round(windVal[-1]))
 
-    wind.append(abs(np.random.normal(prevVal, 2, 1)[0]))
+    windVal.append(abs(np.random.normal(prevVal, 2, 1)[0]))
     windError.append(abs(np.random.normal(round(prevVal/10), 1)))
     if (len(wind)>200):
-        wind = wind[1:]
+        windVal = windVal[1:]
         windError = windError[1:]
 
     if (len(wind)>250):
-        wind = wind[:251]
+        windVal = windVal[:251]
         windError = windError[:251]
     trace = Scatter(
-        y=wind,
+        y=windVal,
         line=dict(
             color='#42C4F7'
         ),
@@ -244,7 +250,7 @@ def gen_wind_speed():
             title='Time Elapsed (sec)'
         ),
         yaxis=dict(
-            range=[min(0, min(wind)), max(45, max(wind)+max(windError))],
+            range=[min(0, min(windVal)), max(45, max(windVal)+max(windError))],
             showline=False,
             zeroline=False,
             nticks=max(6, round(prevVal/10))
@@ -259,18 +265,22 @@ def gen_wind_speed():
     return dict(data=[trace], layout=layout)
 
 @cache.memoize(timeout=10)
-@app.callback(Output('wind-direction', 'figure'), [], [],
+@app.callback(Output('wind-direction', 'figure'), [],
+              [State('wind-speed', 'figure')],
               [Event('wind-speed-update', 'interval')])
-def gen_wind_direction():
+def gen_wind_direction(oldFigure):
     global wind
     global orientation
     global count
+    windVal = []
+    if oldFigure is not None:
+        windVal = oldFigure['data'][0]['y']
     orientation = np.random.uniform(orientation-5, orientation+5)
     count=count+1
     if count == 100:
         count=0
         orientation = np.random.uniform(orientation-50, orientation+50)
-    val = wind[-1]
+    val = windVal[-1]
     trace1 = Area(
         r=[val-10],
         t=np.full(5, orientation),
@@ -297,7 +307,7 @@ def gen_wind_direction():
         ),
         showlegend=False,
         radialaxis=dict(
-            range=[0, max(max(wind), 35)]
+            range=[0, max(max(windVal), 35)]
         ),
         orientation=270,
     )
@@ -306,15 +316,19 @@ def gen_wind_direction():
 @cache.memoize(timeout=100)
 @app.callback(Output('wind-histogram', 'figure'),
               [],
-              [State('bin-slider', 'value'), State('bin-auto', 'values')],
+              [State('wind-speed', 'figure'), State('bin-slider', 'value'),
+               State('bin-auto', 'values')],
               [Event('wind-speed-update', 'interval')])
-def gen_wind_histogram(sliderValue, autoState):
+def gen_wind_histogram(oldFigure, sliderValue, autoState):
     print(sliderValue)
+    windVal = []
+    if oldFigure is not None:
+        windVal = oldFigure['data'][0]['y']
     if 'Auto' in autoState:
-        binVal = np.histogram(wind, bins=range(int(round(min(wind))), int(round(max(wind)))))
+        binVal = np.histogram(windVal, bins=range(int(round(min(windVal))), int(round(max(windVal)))))
     else:
-        binVal = np.histogram(wind, bins=sliderValue)
-    avgVal = float(sum(wind[:201]))/len(wind[:201])
+        binVal = np.histogram(windVal, bins=sliderValue)
+    avgVal = float(sum(windVal[:201]))/len(windVal[:201])
     medianVal = np.median(wind[:201])
     gaussian = lambda x: 3*np.exp(-(30-x)**2/20.)
     X = np.arange(len(binVal[0]))

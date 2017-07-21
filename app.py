@@ -327,8 +327,8 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
         binVal = np.histogram(windVal, bins=range(int(round(min(windVal))), int(round(max(windVal)))))
     else:
         binVal = np.histogram(windVal, bins=sliderValue)
-    avgVal = float(sum(windVal[:201]))/len(windVal[:201])
-    medianVal = np.median(windVal[:201])
+    avgVal = float(sum(windVal))/len(windVal)
+    medianVal = np.median(windVal)
     gaussian = lambda x: 3*np.exp(-(30-x)**2/20.)
     X = np.arange(len(binVal[0]))
     x = np.sum(X*binVal[0])/np.sum(binVal[0])

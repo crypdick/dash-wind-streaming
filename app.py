@@ -17,46 +17,31 @@ windVal = []
 windError = []
 windOrientation = []
 count=0
-prevVal = 20
-prevOrientation = np.random.uniform(0, 360)
-for i in range(0, 200):
-    windVal.append(abs(np.random.normal(prevVal, 2, 1)[0]))
-    windError.append(abs(np.random.normal(round(prevVal/10), 1)))
-    if(i%100 == 0):
-        windOrientation.append(np.random.uniform(prevOrientation-50, prevOrientation+50))
-    else:
-        windOrientation.append(np.random.uniform(prevOrientation-5, prevOrientation+5))
-    if(round(windVal[-1]) > 45):
-        prevVal = int(math.floor(windVal[-1]))
-    elif(round(windVal[-1]) < 10):
-        prevVal = int(math.ceil(windVal[-1]))
-    else:
-        prevVal = int(round(windVal[-1]))
-    prevOrientation = windOrientation[-1]
 
-# def initialize():
-#     global windVal
-#     global windError
-#     global windOrientation
-#     windVal = []
-#     windError = []
-#     windOrientation = []
-#     prevVal = 20
-#     prevOrientation = np.random.unifrom(0, 360)
-#     for i in range(0, 200):
-#         windVal.append(abs(np.random.normal(prevVal, 2, 1)[0]))
-#         windError.append(abs(np.random.normal(round(prevVal/10), 1)))
-#         if(i%100 == 0):
-#             windOrientation.append(np.random.uniform(prevOrientation-50, prevOrientation+50))
-#         else:
-#             windOrientation.append(np.random.uniform(prevOrientation-5, prevOrientation+5))
-#         if(round(windVal[-1]) > 45):
-#             prevVal = int(math.floor(windVal[-1]))
-#         elif(round(windVal[-1]) < 10):
-#             prevVal = int(math.ceil(windVal[-1]))
-#         else:
-#             prevVal = int(round(windVal[-1]))
-#         prevOrientation = windOrientation[-1]
+
+def initialize():
+    global windVal
+    global windError
+    global windOrientation
+    windVal = []
+    windError = []
+    windOrientation = []
+    prevVal = 20
+    prevOrientation = np.random.uniform(0, 360)
+    for i in range(0, 200):
+        windVal.append(abs(np.random.normal(prevVal, 2, 1)[0]))
+        windError.append(abs(np.random.normal(round(prevVal/10), 1)))
+        if(i%100 == 0):
+            windOrientation.append(np.random.uniform(prevOrientation-50, prevOrientation+50))
+        else:
+            windOrientation.append(np.random.uniform(prevOrientation-5, prevOrientation+5))
+        if(round(windVal[-1]) > 45):
+            prevVal = int(math.floor(windVal[-1]))
+        elif(round(windVal[-1]) < 10):
+            prevVal = int(math.ceil(windVal[-1]))
+        else:
+            prevVal = int(round(windVal[-1]))
+        prevOrientation = windOrientation[-1]
 
 app = dash.Dash('streaming-wind-app', server=server)
 
@@ -298,9 +283,7 @@ def gen_wind_direction(oldFigure):
     else:
         count = count + 1
 
-    print(windOrientation)
-    print(len(windOrientation))
-    val = windVal[-1]
+    val = windVal[-3]
     trace1 = Area(
         r=[val-10],
         t=np.full(5, windOrientation[count]),
@@ -505,7 +488,9 @@ external_css = ["https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.
 for css in external_css:
     app.css.append_css({"external_url": css})
 
-
+@app.server.before_first_request
+def defineInitialWind():
+    initialize()
 
 if __name__ == '__main__':
     app.run_server()

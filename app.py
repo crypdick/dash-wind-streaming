@@ -14,21 +14,32 @@ from flask_caching import  Cache
 
 windVal = []
 windError = []
-orientation = 270
+windOrientation = []
+count = 0
 
 def initialize():
     global windVal
     global windError
+    global windOrientation
+    windVal = []
+    windError = []
+    windOrientation = []
     prevVal = 20
+    prevOrientation = 270
     for i in range(0, 200):
         windVal.append(abs(np.random.normal(prevVal, 2, 1)[0]))
         windError.append(abs(np.random.normal(round(prevVal/10), 1)))
+        if(i%100 == 0):
+            windOrientation.append(np.random.uniform(prevOrientation-50, prevOrientation+50))
+        else:
+            windOrientation.append(np.random.uniform(prevOrientation-5, prevOrientation+5))
         if(round(windVal[-1]) > 45):
             prevVal = int(math.floor(windVal[-1]))
         elif(round(windVal[-1]) < 10):
             prevVal = int(math.ceil(windVal[-1]))
         else:
             prevVal = int(round(windVal[-1]))
+        prevOrientation = windOrientation[-1]
 
 app = dash.Dash('streaming-wind-app', server=server)
 
@@ -108,7 +119,7 @@ app.layout = html.Div([
             html.Div([
                 dcc.Slider(
                     id='bin-slider',
-                    min=0,
+                    min=1,
                     max=65,
                     step=1,
                     value=20,
@@ -262,28 +273,25 @@ def gen_wind_speed(oldFigure):
               [State('wind-speed', 'figure')],
               [Event('wind-speed-update', 'interval')])
 def gen_wind_direction(oldFigure):
-    global windVal
-    # Preset wind values either adding to old app values or we will be
+    global count
+    global windOrientation
 
-    windVal = []
-    if oldFigure is not None:
-        windVal = oldFigure['data'][0]['y']
-    orientation = np.random.uniform(orientation-5, orientation+5)
-    count=count+1
-    if count == 100:
-        count=0
-        orientation = np.random.uniform(orientation-50, orientation+50)
+    if(count == 199):
+        count = 0
+    else:
+        count = count + 1
+
     val = windVal[-1]
     trace1 = Area(
         r=[val-10],
-        t=np.full(5, orientation),
+        t=np.full(5, windOrientation[count]),
         marker=dict(
             color='#f8eff9'
         )
     )
     trace = Area(
         r=[val],
-        t=np.full(5, orientation),
+        t=np.full(5, windOrientation[count]),
         marker=dict(
             color='rgb(242, 196, 247)'
         )

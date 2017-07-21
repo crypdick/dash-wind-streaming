@@ -218,13 +218,11 @@ def gen_wind_speed(oldFigure):
 
     windVal.append(abs(np.random.normal(prevVal, 2, 1)[0]))
     windError.append(abs(np.random.normal(round(prevVal/10), 1)))
-    if (len(wind)>200):
+    if (len(windVal)>195):
+        print("We here")
         windVal = windVal[1:]
         windError = windError[1:]
 
-    if (len(wind)>250):
-        windVal = windVal[:251]
-        windError = windError[:251]
     trace = Scatter(
         y=windVal,
         line=dict(
@@ -316,7 +314,8 @@ def gen_wind_direction(oldFigure):
 @cache.memoize(timeout=100)
 @app.callback(Output('wind-histogram', 'figure'),
               [],
-              [State('wind-speed', 'figure'), State('bin-slider', 'value'),
+              [State('wind-speed', 'figure'),
+               State('bin-slider', 'value'),
                State('bin-auto', 'values')],
               [Event('wind-speed-update', 'interval')])
 def gen_wind_histogram(oldFigure, sliderValue, autoState):
@@ -329,7 +328,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
     else:
         binVal = np.histogram(windVal, bins=sliderValue)
     avgVal = float(sum(windVal[:201]))/len(windVal[:201])
-    medianVal = np.median(wind[:201])
+    medianVal = np.median(windVal[:201])
     gaussian = lambda x: 3*np.exp(-(30-x)**2/20.)
     X = np.arange(len(binVal[0]))
     x = np.sum(X*binVal[0])/np.sum(binVal[0])
@@ -455,11 +454,12 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
     return dict(data=[trace, trace1, trace2, trace3], layout=layout)
 
 
-@app.callback(Output('bin-auto', 'values'), [Input('bin-slider', 'value')], [],
+@app.callback(Output('bin-auto', 'values'), [Input('bin-slider', 'value')],
+              [State('wind-speed', 'figure')],
               [Event('bin-slider', 'change')])
-def deselect_auto(sliderValue):
-    global wind
-    if(len(wind) > 5):
+def deselect_auto(sliderValue, oldFigure):
+    print(oldFigure['data'][0]['y'])
+    if (oldFigure is not None and len(oldFigure['data'][0]['y']) > 5):
         return ['']
     else:
         return ['Auto']

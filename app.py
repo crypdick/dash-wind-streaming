@@ -22,12 +22,6 @@ speedCount = 0
 
 app = dash.Dash('streaming-wind-app', server=server)
 
-cache = Cache(app.server, config={
-    'CACHE_TYPE': 'redis',
-    'CACHE_REDIS_URL': os.environ.get('REDIS_URL',  '')
-})
-app.config.supress_callback_exceptions = True
-
 app.layout = html.Div([
     html.Div([
         html.H2("Wind Speed Dashboard",
@@ -191,7 +185,7 @@ app.layout = html.Div([
               'boxShadow': '0px 0px 5px 5px rgba(204,204,204,0.4)'})
 
 
-@cache.memoize(timeout=10)
+@ (timeout=10)
 @app.callback(Output('wind-speed', 'figure'), [],
               [State('wind-speed', 'figure')],
               [Event('wind-speed-update', 'interval')])
@@ -218,7 +212,7 @@ def gen_wind_speed(oldFigure):
 
     windVal.append(abs(np.random.normal(prevVal, 2, 1)[0]))
     windError.append(abs(np.random.normal(round(prevVal/10), 1)))
-    if (len(windVal)>195):
+    if (len(windVal)>202):
         print("We here")
         windVal = windVal[1:]
         windError = windError[1:]
@@ -262,7 +256,7 @@ def gen_wind_speed(oldFigure):
 
     return dict(data=[trace], layout=layout)
 
-@cache.memoize(timeout=10)
+@ (timeout=10)
 @app.callback(Output('wind-direction', 'figure'), [],
               [State('wind-speed', 'figure')],
               [Event('wind-speed-update', 'interval')])
@@ -311,7 +305,7 @@ def gen_wind_direction(oldFigure):
     )
     return dict(data=[trace, trace1], layout=layout)
 
-@cache.memoize(timeout=100)
+
 @app.callback(Output('wind-histogram', 'figure'),
               [],
               [State('wind-speed', 'figure'),

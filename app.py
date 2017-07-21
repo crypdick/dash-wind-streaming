@@ -192,7 +192,7 @@ app.layout = html.Div([
               'boxShadow': '0px 0px 5px 5px rgba(204,204,204,0.4)'})
 
 
-@cache.memoize(timeout=1)
+@cache.memoize(timeout=10)
 @app.callback(Output('wind-speed', 'figure'), [], [],
               [Event('wind-speed-update', 'interval')])
 def gen_wind_speed():
@@ -258,7 +258,7 @@ def gen_wind_speed():
 
     return dict(data=[trace], layout=layout)
 
-@cache.memoize(timeout=1)
+@cache.memoize(timeout=10)
 @app.callback(Output('wind-direction', 'figure'), [], [],
               [Event('wind-speed-update', 'interval')])
 def gen_wind_direction():
@@ -303,7 +303,7 @@ def gen_wind_direction():
     )
     return dict(data=[trace, trace1], layout=layout)
 
-@cache.memoize(timeout=1)
+@cache.memoize(timeout=100)
 @app.callback(Output('wind-histogram', 'figure'),
               [],
               [State('bin-slider', 'value'), State('bin-auto', 'values')],

@@ -308,7 +308,7 @@ def gen_wind_direction(oldFigure):
         r=np.full(5, val-10),
         t=np.full(5, windOrientation[count]),
         marker=dict(
-            color='#FFFFFF'
+            color='#FAEBFC'
         )
     )
     layout = Layout(

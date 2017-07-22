@@ -9,14 +9,13 @@ import numpy as np
 import math
 import os
 server = Flask('my app')
-server.secret_key = 'secret'
-from flask_caching import  Cache
+server.secret_key = os.environ.get('secret_key', 'secret')
 
 
 windVal = []
 windError = []
 windOrientation = []
-count=0
+count = 0
 
 
 def initialize():
@@ -47,107 +46,34 @@ app = dash.Dash('streaming-wind-app', server=server)
 
 app.layout = html.Div([
     html.Div([
-        html.H2("Wind Speed Dashboard",
-                style={
-                    'color': 'white',
-                    'marginLeft': '2%',
-                    'padding-top': '10px',
-                    'display': 'inline-block'
-                }
-                ),
-        html.Img(src="https://cdn.rawgit.com/plotly/design-assets/master/logo/dash/images/dash-logo-by-plotly-stripe-inverted.png?token=ARkbw08LOFmsmBW_ibfg9DreRuh1YDxpks5ZejfPwA%3D%3D",
-                 style={
-                    'height': '75px',
-                    'float': 'right',
-                    'position': 'relative',
-                    'right': '10px'
-                 },
-                 ),
-    ], className='Banner',
-             style={
-                'border-radius': '2px 2px 2px 2px',
-                'background-color': '#42C4F7',
-                'height': '75px',
-                'margin': '0 -10px',
-                'margin-bottom': '10px'
-             }),
+        html.H2("Wind Speed Dashboard"),
+        html.Img(src="https://cdn.rawgit.com/plotly/design-assets/master/logo/dash/images/dash-logo-by-plotly-stripe-inverted.png?token=ARkbw08LOFmsmBW_ibfg9DreRuh1YDxpks5ZejfPwA%3D%3D"),
+    ], className='banner'),
     html.Div([
         html.Div([
-            html.H3("WIND SPEED (mph)",
-                    style={
-                        'color': '#42C4F7',
-                        'border-bottom': '#D8D8D8',
-                        'margin-bottom': '3px',
-                        'margin-top': '3px',
-                        'margin-left': '10px',
-                        'font-size': '1.75rem'
-                    }
-                    )
-        ], className='Title',
-            style={
-                'border-bottom': '1px solid #D8D8D8'
-            }
-        ),
+            html.H3("WIND SPEED (mph)")
+        ], className='Title'),
         html.Div([
-            # html.Div([], className='banner', style={'background-color': 'red', 'height': '30px'}),
             dcc.Graph(id='wind-speed'),
-        ], className='twelve columns'),
+        ], className='twelve columns wind-speed'),
         dcc.Interval(id='wind-speed-update', interval=100),
-    ],
-    style={
-        'border': '1px solid #D8D8D8',
-        'border-radius': '5px 5px 5px 5px',
-        'border-bottom': '0'
-    },
-    className='row'),
+    ], className='row wind-speed-row'),
     html.Div([
         html.Div([
             html.Div([
-                html.H3("WIND SPEED HISTOGRAM",
-                        style={
-                            'color': '#42C4F7',
-                            'border-bottom': '#D8D8D8',
-                            'margin-bottom': '3px',
-                            'margin-top': '3px',
-                            'margin-left': '10px',
-                            'font-size': '1.75rem'
-                        }
-                        )
-            ], className='Title',
-                style={
-                    'border-bottom': '1px solid #D8D8D8'
-                }
-            ),
+                html.H3("WIND SPEED HISTOGRAM")
+            ], className='Title'),
             html.Div([
                 dcc.Slider(
                     id='bin-slider',
                     min=1,
-                    max=65,
+                    max=60,
                     step=1,
                     value=20,
                     updatemode='drag'
-                    # disabled=True
                 ),
-            ], style={
-                'width': '65%',
-                'margin': '0 auto',
-                'position': 'relative',
-                'zIndex': '1000000',
-                'top': '40px',
-                'left': '25px'
-            }),
-            html.P('Bin Size: Auto', id='bin-size',
-                    style={
-                        'display': 'inline-block',
-                        'font-size': 'small',
-                        'font-family': 'Raleway',
-                        'position': 'relative',
-                        'margin': '0',
-                        'float': 'right',
-                        'right': '65px',
-                        'top': '50px',
-                        'zIndex': 10000000
-                    }),
+            ], className='histogram-slider'),
+            html.P('Bin Size: Auto', id='bin-size', className='bin-size'),
             html.Div([
                 dcc.Checklist(
                     id='bin-auto',
@@ -156,52 +82,18 @@ app.layout = html.Div([
                     ],
                     values=['Auto']
                 ),
-            ], style={
-                'display': 'inline-block',
-                'zIndex': '1000000',
-                'position': 'relative',
-                'top': '45px',
-                'font-size': 'small',
-                'left': '90px'
-            }),
+            ], className='bin-auto'),
             dcc.Graph(id='wind-histogram'),
-        ], style={
-            'border': '1px solid #D8D8D8',
-            'width': '68.4%',
-            'border-radius': '5px 5px 5px 5px',
-        }, className='seven columns'),
+        ], className='seven columns wind-histogram'),
         html.Div([
             html.Div([
-                html.H3("WIND DIRECTION",
-                        style={
-                            'color': '#42C4F7',
-                            'border-bottom': '#D8D8D8',
-                            'margin-bottom': '3px',
-                            'margin-top': '3px',
-                            'margin-left': '10px',
-                            'font-size': '1.75rem'
-                        }
-                        )
-            ], className='Title',
-                style={
-                    'border-bottom': '1px solid #D8D8D8'
-                }
-            ),
+                html.H3("WIND DIRECTION")
+            ], className='Title'),
             dcc.Graph(id='wind-direction'),
-        ], className='five columns',
-        style={
-            'border': '1px solid #D8D8D8',
-            'border-radius': '5px 5px 5px 5px',
-            'marginLeft': '0',
-            'float': 'right',
-            'width': '305px',
-            # 'width': '34.6666666667%',
-            'border-left': '0',
-            'height': '532px'
-        })
-    ], className='row', style={'float': 'center', 'margin-bottom': '0'})
+        ], className='five columns wind-polar')
+    ], className='row wind-histo-polar')
 ], style={'padding': '0px 10px 15px 10px',
-              'marginLeft': 'auto', 'marginRight': 'auto', "width": "1000px",
+              'marginLeft': 'auto', 'marginRight': 'auto', "width": "900px",
               'boxShadow': '0px 0px 5px 5px rgba(204,204,204,0.4)'})
 
 
@@ -273,7 +165,7 @@ def gen_wind_speed(oldFigure):
         )
     )
 
-    return dict(data=[trace], layout=layout)
+    return dict(data=[trace], layout=layout, config={"displayModeBar": False})
 
 
 @app.callback(Output('wind-direction', 'figure'), [],
@@ -313,7 +205,7 @@ def gen_wind_direction(oldFigure):
     )
     layout = Layout(
         autosize=True,
-        width=300,
+        width=275,
         plot_bgcolor='#F2F2F2',
         margin=Margin(
             t=10,
@@ -323,10 +215,10 @@ def gen_wind_direction(oldFigure):
         ),
         showlegend=False,
         radialaxis=dict(
-            tickcolor='white',
             range=[0, max(max(windVal), 40)]
         ),
         angularaxis=dict(
+            showline=False,
             tickcolor='white'
         ),
         orientation=270,
@@ -428,7 +320,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             showline=False,
             zeroline=False,
             title='Number of Samples'
-        ),
+            ),
         margin=dict(
             t=50,
             b=20,
@@ -499,12 +391,14 @@ def deselect_auto(autoValue, sliderValue):
 
 
 external_css = ["https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css",
+                "https://cdn.rawgit.com/plotly/dash-app-stylesheets/dd2784a050c09181150770d06bd5f548d5a22733/dash-wind-streaming.css",
                 "https://fonts.googleapis.com/css?family=Raleway:400,400i,700,700i",
                 "https://fonts.googleapis.com/css?family=Product+Sans:400,400i,700,700i"]
 
 
 for css in external_css:
     app.css.append_css({"external_url": css})
+
 
 @app.server.before_first_request
 def defineInitialWind():

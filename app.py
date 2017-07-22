@@ -73,7 +73,7 @@ app.layout = html.Div([
                     updatemode='drag'
                 ),
             ], className='histogram-slider'),
-            html.P('Bin Size: Auto', id='bin-size', className='bin-size'),
+            html.P('# of Bins: Auto', id='bin-size', className='bin-size'),
             html.Div([
                 dcc.Checklist(
                     id='bin-auto',

@@ -8,4 +8,4 @@ To learn more check out our [documentation](https://plot.ly/dash).
 
 The following are screenshots for the app in this repo:
 
-![Alt desc]()
+![Alt desc](https://cdn.rawgit.com/plotly/dash-wind-streaming/e3d06ecda51d4d59af3c1a702e35bf100c29e98a/Screenshot/dash-wind-streaming.png)

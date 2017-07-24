@@ -227,11 +227,11 @@ def gen_wind_histogram(old_figure, sliderValue, auto_state):
                               int(round(max(wind_val)))))
     else:
         bin_val = np.histogram(wind_val, bins=sliderValue)
-    avgVal = float(sum(wind_val))/len(wind_val)
-    medianVal = np.median(wind_val)
+    avg_val = float(sum(wind_val))/len(wind_val)
+    median_val = np.median(wind_val)
 
     param = rayleigh.fit(bin_val[0])
-    pdf_fitted = rayleigh.pdf(bin_val[1], loc=(avgVal-abs(param[1]))*0.55,
+    pdf_fitted = rayleigh.pdf(bin_val[1], loc=(avg_val-abs(param[1]))*0.55,
                               scale=(bin_val[1][-1] - bin_val[1][0])/3)
 
     y_val = pdf_fitted * max(bin_val[0]) * 20,
@@ -316,8 +316,8 @@ def gen_wind_histogram(old_figure, sliderValue, auto_state):
                 yref='y',
                 y1=int(max(bin_val_max, y_val_max))+0.5,
                 y0=0,
-                x0=avgVal,
-                x1=avgVal,
+                x0=avg_val,
+                x1=avg_val,
                 type='line',
                 line=Line(
                     dash='dash',
@@ -330,8 +330,8 @@ def gen_wind_histogram(old_figure, sliderValue, auto_state):
                 yref='y',
                 y1=int(max(bin_val_max, y_val_max))+0.5,
                 y0=0,
-                x0=medianVal,
-                x1=medianVal,
+                x0=median_val,
+                x1=median_val,
                 type='line',
                 line=Line(
                     dash='dot',

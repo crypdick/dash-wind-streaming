@@ -330,7 +330,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             dict(
                 xref='x',
                 yref='y',
-                y1=int(max(max(binVal[0]), max(yVal)))+0.5,
+                y1=int(max([max(binVal[0]), max(yVal)]))+0.5,
                 y0=0,
                 x0=avgVal,
                 x1=avgVal,
@@ -344,7 +344,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             dict(
                 xref='x',
                 yref='y',
-                y1=int(max(max(binVal[0]), max(yVal)))+0.5,
+                y1=int(max([max(binVal[0]), max(yVal)]))+0.5,
                 y0=0,
                 x0=medianVal,
                 x1=medianVal,

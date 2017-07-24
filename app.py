@@ -251,9 +251,9 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
 
     print(binVal[0])
     print(binVal[1])
-
+#(binVal[1][-1] - binVal[1][0])/3
     param = rayleigh.fit(binVal[0])
-    pdf_fitted = rayleigh.pdf(binVal[1], loc=(avgVal-param[1])*0.75, scale=(binVal[1][-1] - binVal[1][0])/3)
+    pdf_fitted = rayleigh.pdf(binVal[1], loc=(avgVal-abs(param[1]))*0.55, scale=(binVal[1][-1] - binVal[1][0])/3)
     gaussian = lambda x: 3*np.exp(-(30-x)**2/20.)
     X = np.arange(len(binVal[0]))
     x = np.sum(X*binVal[0])/np.sum(binVal[0])
@@ -346,7 +346,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             dict(
                 xref='x',
                 yref='y',
-                y1=int(max(yVal[0]))+0.5,
+                y1=int(max(binVal[0]))+0.5,
                 y0=0,
                 x0=avgVal,
                 x1=avgVal,
@@ -360,7 +360,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             dict(
                 xref='x',
                 yref='y',
-                y1=int(max(yVal[0]))+0.5,
+                y1=int(max(binVal[0]))+0.5,
                 y0=0,
                 x0=medianVal,
                 x1=medianVal,

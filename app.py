@@ -122,12 +122,8 @@ def gen_wind_speed(oldFigure):
     windVal.append(abs(np.random.normal(prevVal, 2, 1)[0]))
     windError.append(abs(np.random.normal(round(prevVal/10), 1)))
     if (len(windVal) > 202):
-        print("We here")
         windVal = windVal[1:]
         windError = windError[1:]
-        print(windVal[-3])
-
-    print(len(windVal))
 
     trace = Scatter(
         y=windVal,
@@ -235,7 +231,6 @@ def gen_wind_direction(oldFigure):
                State('bin-auto', 'values')],
               [Event('wind-speed-update', 'interval')])
 def gen_wind_histogram(oldFigure, sliderValue, autoState):
-    print(sliderValue)
     windVal = []
     if oldFigure is not None:
         windVal = oldFigure['data'][0]['y']
@@ -260,8 +255,6 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
         nticks = 35
     else:
         nticks = len(binVal[1])
-    print(binVal)
-    print(nticks)
     trace = Bar(
         x=binVal[1],
         y=binVal[0],
@@ -376,7 +369,6 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
               [State('wind-speed', 'figure')],
               [Event('bin-slider', 'change')])
 def deselect_auto(sliderValue, oldFigure):
-    print(oldFigure['data'][0]['y'])
     if (oldFigure is not None and len(oldFigure['data'][0]['y']) > 5):
         return ['']
     else:

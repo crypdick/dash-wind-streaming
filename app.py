@@ -184,7 +184,7 @@ def gen_wind_direction(old_figure):
         )
     )
     trace2 = Area(
-        r=np.full(5, val*0.45),
+        r=np.full(5, val*0.30),
         t=np.full(5, wind_orientation[count]),
         marker=Marker(
             color='#FAEBFC'
@@ -297,7 +297,7 @@ def gen_wind_histogram(old_figure, sliderValue, auto_state):
             showline=False,
             zeroline=False,
             title='Number of Samples'
-            ),
+        ),
         margin=Margin(
             t=50,
             b=20,

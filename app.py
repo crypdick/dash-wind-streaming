@@ -251,8 +251,11 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
 
     fit = lambda t: maxV*np.exp(-(t-x)**2/(2*width**2))
     yVal = pdf_fitted * max(binVal[0]) * 20,
-    #
-    # print(yVal[0])
+    yValMax = max(yVal[0])
+    binValMax = max(binVal[0])
+    print(yVal[0])
+    print(yValMax)
+    print(binValMax)
 
     trace = Bar(
         x=binVal[1],
@@ -261,7 +264,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             color='#7F7F7F'
         ),
         showlegend=False,
-        hoverinfo='y'
+        hoverinfo='x+y'
     )
     trace1 = Scatter(
         x=[25],
@@ -330,7 +333,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             dict(
                 xref='x',
                 yref='y',
-                y1=int(max([max(binVal[0]), max(yVal)]))+0.5,
+                y1=int(max(binValMax, yValMax))+0.5,
                 y0=0,
                 x0=avgVal,
                 x1=avgVal,
@@ -344,7 +347,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             dict(
                 xref='x',
                 yref='y',
-                y1=int(max([max(binVal[0]), max(yVal)]))+0.5,
+                y1=int(max(maxV, yValMax))+0.5,
                 y0=0,
                 x0=medianVal,
                 x1=medianVal,

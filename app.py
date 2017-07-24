@@ -173,8 +173,6 @@ def gen_wind_direction(oldFigure):
 
     val = windVal[-3]
 
-    print(windOrientation[count])
-
     trace = Area(
         r=np.full(5, val),
         t=np.full(5, windOrientation[count]),

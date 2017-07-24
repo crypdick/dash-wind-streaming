@@ -4,6 +4,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State, Event
 import plotly.plotly as py
 from plotly.graph_objs import *
+from scipy.stats import rayleigh
 from flask import Flask
 import numpy as np
 import math
@@ -45,11 +46,13 @@ def initialize():
         prevOrientation = windOrientation[-1]
 
 
-app = dash.Dash('streaming-wind-app', server=server)
+app = dash.Dash('streaming-wind-app', server=server,
+                url_base_pathname='/dash/gallery/live-wind-data/',
+                csrf_protect=False)
 
 app.layout = html.Div([
     html.Div([
-        html.H2("Wind Speed Streaming Application"),
+        html.H2("Wind Speed Streaming"),
         html.Img(src="https://cdn.rawgit.com/plotly/design-assets/master/logo/dash/images/dash-logo-by-plotly-stripe-inverted.png?token=ARkbw08LOFmsmBW_ibfg9DreRuh1YDxpks5ZejfPwA%3D%3D"),
     ], className='banner'),
     html.Div([
@@ -124,6 +127,8 @@ def gen_wind_speed(oldFigure):
     if (len(windVal) > 202):
         windVal = windVal[1:]
         windError = windError[1:]
+
+
 
     trace = Scatter(
         y=windVal,
@@ -241,6 +246,12 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
         binVal = np.histogram(windVal, bins=sliderValue)
     avgVal = float(sum(windVal))/len(windVal)
     medianVal = np.median(windVal)
+
+    print(binVal[0])
+    print(binVal[1])
+
+    param = rayleigh.fit(binVal[0]) # distribution fitting
+    pdf_fitted = rayleigh.pdf(binVal[1], loc=(avgVal * 0.35), scale=15)
     gaussian = lambda x: 3*np.exp(-(30-x)**2/20.)
     X = np.arange(len(binVal[0]))
     x = np.sum(X*binVal[0])/np.sum(binVal[0])
@@ -297,8 +308,8 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
         line=dict(
             color='#42C4F7'
         ),
-        y=yVal,
-        x=binVal[1],
+        y=pdf_fitted * binVal[1] * 10,
+        x=binVal[1][:len(binVal[1])],
         name='Gaussian Fit'
     )
     layout = Layout(
@@ -308,8 +319,8 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             showline=False,
             tickvals=[round(elem, 2) for elem in binVal[1]],
             nticks=nticks,
-            range=[math.ceil(min(binVal[1]))-0.5,
-                   math.floor(max(binVal[1]))+0.5]
+            # range=[math.ceil(min(binVal[1]))-0.5,
+            #       math.floor(max(binVal[1]))+0.5]
         ),
         yaxis=dict(
             showgrid=False,

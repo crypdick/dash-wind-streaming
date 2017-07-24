@@ -310,7 +310,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
         ),
         y=yVal[0],
         x=binVal[1][:len(binVal[1])],
-        name='Gaussian Fit'
+        name='Rayleigh Fit'
     )
     layout = Layout(
         xaxis=dict(

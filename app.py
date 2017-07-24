@@ -81,18 +81,19 @@ def gen_wind_speed(old_figure):
     wind_val = []
     wind_error = []
     prev_val = 20
-    for i in range(0, 200):
-        wind_val.append(abs(np.random.normal(prev_val, 2, 1)[0]))
-        wind_error.append(abs(np.random.normal(round(prev_val/10), 1)))
-        if(round(wind_val[-1]) > 45):
-            prev_val = int(math.floor(wind_val[-1]))
-        elif(round(wind_val[-1]) < 10):
-            prev_val = int(math.ceil(wind_val[-1]))
-        else:
-            prev_val = int(round(wind_val[-1]))
     # We will use the previous values that we graphed and continue to add
     # to them. If no figure exists then we use the previously generated data
-    if old_figure is not None and len(old_figure['data'][0]['y']) > 0:
+    if old_figure is None or len(old_figure['data'][0]['y']) == 0:
+        for i in range(0, 200):
+            wind_val.append(abs(np.random.normal(prev_val, 2, 1)[0]))
+            wind_error.append(abs(np.random.normal(round(prev_val/10), 1)))
+            if(round(wind_val[-1]) > 45):
+                prev_val = int(math.floor(wind_val[-1]))
+            elif(round(wind_val[-1]) < 10):
+                prev_val = int(math.ceil(wind_val[-1]))
+            else:
+                prev_val = int(round(wind_val[-1]))
+    else:
         wind_val = old_figure['data'][0]['y']
         wind_error = old_figure['data'][0]['error_y']['array']
     if len(wind_val) == 0:
@@ -176,14 +177,14 @@ def gen_wind_direction(old_figure):
         )
     )
     trace1 = Area(
-        r=np.full(5, val-5),
+        r=np.full(5, val*0.65),
         t=np.full(5, wind_orientation[count]),
         marker=Marker(
             color='#F6D7F9'
         )
     )
     trace2 = Area(
-        r=np.full(5, val-10),
+        r=np.full(5, val*0.45),
         t=np.full(5, wind_orientation[count]),
         marker=Marker(
             color='#FAEBFC'
@@ -232,7 +233,7 @@ def gen_wind_histogram(old_figure, sliderValue, auto_state):
     median_val = np.median(wind_val)
 
     param = rayleigh.fit(bin_val[0])
-    pdf_fitted = rayleigh.pdf(bin_val[1], loc=(avg_val-abs(param[1]))*0.55,
+    pdf_fitted = rayleigh.pdf(bin_val[1], loc=(avg_val)*0.55,
                               scale=(bin_val[1][-1] - bin_val[1][0])/3)
 
     y_val = pdf_fitted * max(bin_val[0]) * 20,

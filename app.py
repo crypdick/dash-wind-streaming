@@ -30,10 +30,12 @@ def initialize():
     for i in range(0, 200):
         windVal.append(abs(np.random.normal(prevVal, 2, 1)[0]))
         windError.append(abs(np.random.normal(round(prevVal/10), 1)))
-        if(i%100 == 0):
-            windOrientation.append(np.random.uniform(prevOrientation-50, prevOrientation+50))
+        if(i % 100 == 0):
+            windOrientation.append(np.random.uniform(prevOrientation-50,
+                                                     prevOrientation+50))
         else:
-            windOrientation.append(np.random.uniform(prevOrientation-5, prevOrientation+5))
+            windOrientation.append(np.random.uniform(prevOrientation-5,
+                                                     prevOrientation+5))
         if(round(windVal[-1]) > 45):
             prevVal = int(math.floor(windVal[-1]))
         elif(round(windVal[-1]) < 10):
@@ -41,6 +43,7 @@ def initialize():
         else:
             prevVal = int(round(windVal[-1]))
         prevOrientation = windOrientation[-1]
+
 
 app = dash.Dash('streaming-wind-app', server=server)
 
@@ -116,11 +119,9 @@ def gen_wind_speed(oldFigure):
     else:
         prevVal = int(round(windVal[-1]))
 
-
-
     windVal.append(abs(np.random.normal(prevVal, 2, 1)[0]))
     windError.append(abs(np.random.normal(round(prevVal/10), 1)))
-    if (len(windVal)>202):
+    if (len(windVal) > 202):
         print("We here")
         windVal = windVal[1:]
         windError = windError[1:]
@@ -239,7 +240,8 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
     if oldFigure is not None:
         windVal = oldFigure['data'][0]['y']
     if 'Auto' in autoState:
-        binVal = np.histogram(windVal, bins=range(int(round(min(windVal))), int(round(max(windVal)))))
+        binVal = np.histogram(windVal, bins=range(int(round(min(windVal))),
+                              int(round(max(windVal)))))
     else:
         binVal = np.histogram(windVal, bins=sliderValue)
     avgVal = float(sum(windVal))/len(windVal)
@@ -251,7 +253,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
 
     maxV = binVal[0].max()
 
-    fit = lambda t : maxV*np.exp(-(t-x)**2/(2*width**2))
+    fit = lambda t: maxV*np.exp(-(t-x)**2/(2*width**2))
     yVal = fit(X)
 
     if(int(sliderValue) > 35):
@@ -313,7 +315,8 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             showline=False,
             tickvals=[round(elem, 2) for elem in binVal[1]],
             nticks=nticks,
-            range=[math.ceil(min(binVal[1]))-0.5, math.floor(max(binVal[1]))+0.5]
+            range=[math.ceil(min(binVal[1]))-0.5,
+                   math.floor(max(binVal[1]))+0.5]
         ),
         yaxis=dict(
             showgrid=False,
@@ -403,6 +406,7 @@ for css in external_css:
 @app.server.before_first_request
 def defineInitialWind():
     initialize()
+
 
 if __name__ == '__main__':
     app.run_server()

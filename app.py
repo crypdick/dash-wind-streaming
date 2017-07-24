@@ -46,7 +46,7 @@ app = dash.Dash('streaming-wind-app', server=server)
 
 app.layout = html.Div([
     html.Div([
-        html.H2("Wind Speed Dashboard"),
+        html.H2("Wind Speed Streaming Application"),
         html.Img(src="https://cdn.rawgit.com/plotly/design-assets/master/logo/dash/images/dash-logo-by-plotly-stripe-inverted.png?token=ARkbw08LOFmsmBW_ibfg9DreRuh1YDxpks5ZejfPwA%3D%3D"),
     ], className='banner'),
     html.Div([

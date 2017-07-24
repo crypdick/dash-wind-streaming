@@ -251,7 +251,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
     print(binVal[1])
 
     param = rayleigh.fit(binVal[0]) # distribution fitting
-    pdf_fitted = rayleigh.pdf(binVal[1], loc=(avgVal * 0.35), scale=15)
+    pdf_fitted = rayleigh.pdf(binVal[1], loc=(avgVal * 0.35), scale=10)
     gaussian = lambda x: 3*np.exp(-(30-x)**2/20.)
     X = np.arange(len(binVal[0]))
     x = np.sum(X*binVal[0])/np.sum(binVal[0])

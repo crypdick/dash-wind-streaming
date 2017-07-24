@@ -90,8 +90,8 @@ app.layout = html.Div([
         ], className='five columns wind-polar')
     ], className='row wind-histo-polar')
 ], style={'padding': '0px 10px 15px 10px',
-              'marginLeft': 'auto', 'marginRight': 'auto', "width": "900px",
-              'boxShadow': '0px 0px 5px 5px rgba(204,204,204,0.4)'})
+          'marginLeft': 'auto', 'marginRight': 'auto', "width": "900px",
+          'boxShadow': '0px 0px 5px 5px rgba(204,204,204,0.4)'})
 
 
 @app.callback(Output('wind-speed', 'figure'), [],
@@ -118,8 +118,6 @@ def gen_wind_speed(oldFigure):
     if (len(windVal) > 202):
         windVal = windVal[1:]
         windError = windError[1:]
-
-
 
     trace = Scatter(
         y=windVal,
@@ -241,21 +239,12 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
     medianVal = np.median(windVal)
 
     param = rayleigh.fit(binVal[0])
-    pdf_fitted = rayleigh.pdf(binVal[1], loc=(avgVal-abs(param[1]))*0.55, scale=(binVal[1][-1] - binVal[1][0])/3)
-    gaussian = lambda x: 3*np.exp(-(30-x)**2/20.)
-    X = np.arange(len(binVal[0]))
-    x = np.sum(X*binVal[0])/np.sum(binVal[0])
-    width = np.sqrt(np.abs(np.sum((X-x)**2*binVal[0])/np.sum(binVal[0])))
+    pdf_fitted = rayleigh.pdf(binVal[1], loc=(avgVal-abs(param[1]))*0.55,
+                              scale=(binVal[1][-1] - binVal[1][0])/3)
 
-    maxV = binVal[0].max()
-
-    fit = lambda t: maxV*np.exp(-(t-x)**2/(2*width**2))
     yVal = pdf_fitted * max(binVal[0]) * 20,
     yValMax = max(yVal[0])
     binValMax = max(binVal[0])
-    print(yVal[0])
-    print(yValMax)
-    print(binValMax)
 
     trace = Bar(
         x=binVal[1],

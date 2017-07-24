@@ -252,8 +252,8 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
     print(binVal[0])
     print(binVal[1])
 
-    param = rayleigh.fit(binVal[0]) # distribution fitting
-    pdf_fitted = rayleigh.pdf(binVal[1], loc=(avgVal * 0.35), scale=10)
+    param = rayleigh.fit(binVal[0])
+    pdf_fitted = rayleigh.pdf(binVal[1], loc=(avgVal-param[1])*0.75, scale=(binVal[1][-1] - binVal[1][0])/3)
     gaussian = lambda x: 3*np.exp(-(30-x)**2/20.)
     X = np.arange(len(binVal[0]))
     x = np.sum(X*binVal[0])/np.sum(binVal[0])
@@ -262,12 +262,10 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
     maxV = binVal[0].max()
 
     fit = lambda t: maxV*np.exp(-(t-x)**2/(2*width**2))
-    yVal = fit(X)
+    yVal = pdf_fitted * max(binVal[0]) * 20,
 
-    if(int(sliderValue) > 35):
-        nticks = 35
-    else:
-        nticks = len(binVal[1])
+    print(yVal[0])
+
     trace = Bar(
         x=binVal[1],
         y=binVal[0],
@@ -310,7 +308,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
         line=dict(
             color='#42C4F7'
         ),
-        y=pdf_fitted * binVal[1] * 10,
+        y=yVal[0],
         x=binVal[1][:len(binVal[1])],
         name='Gaussian Fit'
     )
@@ -319,8 +317,8 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             title='Wind Speed (mph), Rounded to Closest Integer',
             showgrid=False,
             showline=False,
-            tickvals=[round(elem, 2) for elem in binVal[1]],
-            nticks=nticks,
+            # tickvals=[round(elem, 2) for elem in binVal[1]],
+            # nticks=nticks,
             # range=[math.ceil(min(binVal[1]))-0.5,
             #       math.floor(max(binVal[1]))+0.5]
         ),
@@ -348,7 +346,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             dict(
                 xref='x',
                 yref='y',
-                y1=int(max(yVal))+0.5,
+                y1=int(max(yVal[0]))+0.5,
                 y0=0,
                 x0=avgVal,
                 x1=avgVal,
@@ -362,7 +360,7 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
             dict(
                 xref='x',
                 yref='y',
-                y1=int(max(yVal))+0.5,
+                y1=int(max(yVal[0]))+0.5,
                 y0=0,
                 x0=medianVal,
                 x1=medianVal,

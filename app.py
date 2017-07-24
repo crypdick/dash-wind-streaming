@@ -249,8 +249,8 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
     avgVal = float(sum(windVal))/len(windVal)
     medianVal = np.median(windVal)
 
-    print(binVal[0])
-    print(binVal[1])
+    # print(binVal[0])
+    # print(binVal[1])
 #(binVal[1][-1] - binVal[1][0])/3
     param = rayleigh.fit(binVal[0])
     pdf_fitted = rayleigh.pdf(binVal[1], loc=(avgVal-abs(param[1]))*0.55, scale=(binVal[1][-1] - binVal[1][0])/3)
@@ -263,8 +263,8 @@ def gen_wind_histogram(oldFigure, sliderValue, autoState):
 
     fit = lambda t: maxV*np.exp(-(t-x)**2/(2*width**2))
     yVal = pdf_fitted * max(binVal[0]) * 20,
-
-    print(yVal[0])
+    # 
+    # print(yVal[0])
 
     trace = Bar(
         x=binVal[1],

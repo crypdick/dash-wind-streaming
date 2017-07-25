@@ -82,38 +82,18 @@ def gen_wind_speed(old_figure):
     total_time = (hour * 3600) + (minute * 60) + (sec)
 
     con = sqlite3.connect("wind-data.db")
-    df = pd.read_sql_query("SELECT * from Wind where rowid = " +
-                           str(total_time) + ";", con)
-
-    # To avoid using global variables, we will filter data from our database
-    # and add it to the previously graphed values in the figure itself, if the
-    # figure has never been graphed then we will draw data from the past 200
-    # seconds and continue to stream to it.
-    if old_figure is None or len(old_figure['data'][0]['y']) == 0:
-        df = pd.read_sql_query("SELECT * from Wind where rowid > " +
-                               str(total_time-200) + " AND rowid < " +
-                               str(total_time) + ";", con)
-        wind_val = df["Speed"].tolist()
-        wind_error = df["SpeedError"].tolist()
-    else:
-        wind_val = old_figure['data'][0]['y']
-        wind_error = old_figure['data'][0]['error_y']['array']
-
-    wind_val.append(df["Speed"][0])
-    wind_error.append(df["SpeedError"][0])
-
-    if (len(wind_val) > 202):
-        wind_val = wind_val[1:]
-        wind_error = wind_error[1:]
+    df = pd.read_sql_query('SELECT Speed, SpeedError, Direction from Wind where\
+                            rowid > "{}" AND rowid <= "{}";'
+                            .format(total_time-200, total_time), con)
 
     trace = Scatter(
-        y=wind_val,
+        y=df['Speed'],
         line=Line(
             color='#42C4F7'
         ),
         error_y=ErrorY(
             type='data',
-            array=wind_error,
+            array=df['SpeedError'],
             thickness=1.5,
             width=2,
             color='#B4E8FC'
@@ -132,12 +112,12 @@ def gen_wind_speed(old_figure):
             title='Time Elapsed (sec)'
         ),
         yaxis=dict(
-            range=[min(0, min(wind_val)),
-                   max(45, max(wind_val)+max(wind_error))],
+            range=[min(0, min(df['Speed'])),
+                   max(45, max(df['Speed'])+max(df['SpeedError']))],
             showline=False,
             fixedrange=True,
             zeroline=False,
-            nticks=max(6, round(wind_val[-3]/10))
+            nticks=max(6, round(df['Speed'].iloc[-1]/10))
         ),
         margin=Margin(
             t=45,
@@ -150,9 +130,9 @@ def gen_wind_speed(old_figure):
 
 
 @app.callback(Output('wind-direction', 'figure'), [],
-              [State('wind-speed', 'figure')],
+              [],
               [Event('wind-speed-update', 'interval')])
-def gen_wind_direction(old_figure):
+def gen_wind_direction():
     now = dt.datetime.now()
     sec = now.second
     minute = now.minute
@@ -161,35 +141,28 @@ def gen_wind_direction(old_figure):
     total_time = (hour * 3600) + (minute * 60) + (sec)
 
     con = sqlite3.connect("wind-data.db")
-    wind_orientation = pd.read_sql_query("SELECT * from Wind where rowid = " +
+    df = pd.read_sql_query("SELECT * from Wind where rowid = " +
                                          str(total_time) + ";", con)
 
-    # Similar idea to that of the wind-speed graph, we are storing the data
-    # inside the figure itself, since we are maintaining 202 elements in the
-    # trace at a time while only having a range up to 200 we will get the third
-    # last element from our graph as this one will be the most recent one that
-    # has been displayed.
-    if old_figure is not None and len(old_figure['data'][0]['y']) > 0:
-        val = old_figure['data'][0]['y'][-3]
-        wind_val = old_figure['data'][0]['y']
+    val = df['Speed'].iloc[-1]
 
     trace = Area(
         r=np.full(5, val),
-        t=np.full(5, wind_orientation['Direction']),
+        t=np.full(5, df['Direction']),
         marker=Marker(
             color='rgb(242, 196, 247)'
         )
     )
     trace1 = Area(
         r=np.full(5, val*0.65),
-        t=np.full(5, wind_orientation['Direction']),
+        t=np.full(5, df['Direction']),
         marker=Marker(
             color='#F6D7F9'
         )
     )
     trace2 = Area(
         r=np.full(5, val*0.30),
-        t=np.full(5, wind_orientation['Direction']),
+        t=np.full(5, df['Direction']),
         marker=Marker(
             color='#FAEBFC'
         )
@@ -206,7 +179,7 @@ def gen_wind_direction(old_figure):
         ),
         showlegend=False,
         radialaxis=dict(
-            range=[0, max(max(wind_val), 40)]
+            range=[0, max(max(df['Speed']), 40)]
         ),
         angularaxis=dict(
             showline=False,
@@ -220,11 +193,10 @@ def gen_wind_direction(old_figure):
 
 @app.callback(Output('wind-histogram', 'figure'),
               [],
-              [State('wind-speed', 'figure'),
-               State('bin-slider', 'value'),
+              [State('bin-slider', 'value'),
                State('bin-auto', 'values')],
               [Event('wind-speed-update', 'interval')])
-def gen_wind_histogram(old_figure, sliderValue, auto_state):
+def gen_wind_histogram(sliderValue, auto_state):
     wind_val = []
     if old_figure is not None:
         wind_val = old_figure['data'][0]['y']
@@ -353,7 +325,7 @@ def gen_wind_histogram(old_figure, sliderValue, auto_state):
 
 
 @app.callback(Output('bin-auto', 'values'), [Input('bin-slider', 'value')],
-              [State('wind-speed', 'figure')],
+              [],
               [Event('bin-slider', 'change')])
 def deselect_auto(sliderValue, old_figure):
     if (old_figure is not None and len(old_figure['data'][0]['y']) > 5):

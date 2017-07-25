@@ -373,7 +373,7 @@ def deselect_auto(autoValue, sliderValue):
 
 
 external_css = ["https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css",
-                "https://cdn.rawgit.com/plotly/dash-app-stylesheets/dd2784a050c09181150770d06bd5f548d5a22733/dash-wind-streaming.css",
+                "https://cdn.rawgit.com/plotly/dash-app-stylesheets/737dc4ab11f7a1a8d6b5645d26f69133d97062ae/dash-wind-streaming.css",
                 "https://fonts.googleapis.com/css?family=Raleway:400,400i,700,700i",
                 "https://fonts.googleapis.com/css?family=Product+Sans:400,400i,700,700i"]
 

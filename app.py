@@ -101,8 +101,7 @@ def gen_wind_speed(old_figure):
 
     wind_val.append(df["Speed"][0])
     wind_error.append(df["SpeedError"][0])
-    print(wind_val[-1], "Speed")
-    print(wind_error[-1], "Error")
+
     if (len(wind_val) > 202):
         wind_val = wind_val[1:]
         wind_error = wind_error[1:]
@@ -172,7 +171,6 @@ def gen_wind_direction(old_figure):
         val = old_figure['data'][0]['y'][-3]
         wind_val = old_figure['data'][0]['y']
 
-    print(wind_orientation['Direction'], 'Direction')
     trace = Area(
         r=np.full(5, val),
         t=np.full(5, wind_orientation['Direction']),

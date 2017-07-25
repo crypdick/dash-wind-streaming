@@ -197,10 +197,12 @@ def gen_wind_direction():
                State('bin-slider', 'value'),
                State('bin-auto', 'values')],
               [Event('wind-speed-update', 'interval')])
-def gen_wind_histogram(old_figure, sliderValue, auto_state):
+def gen_wind_histogram(wind_speed_figure, sliderValue, auto_state):
     wind_val = []
-    if old_figure is not None:
-        wind_val = old_figure['data'][0]['y']
+
+    # Check to see whether wind-speed has been plotted yet
+    if wind_speed_figure is not None:
+        wind_val = wind_speed_figure['data'][0]['y']
     if 'Auto' in auto_state:
         bin_val = np.histogram(wind_val, bins=range(int(round(min(wind_val))),
                                int(round(max(wind_val)))))

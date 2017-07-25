@@ -128,12 +128,14 @@ def gen_wind_speed(old_figure):
             showgrid=False,
             showline=False,
             zeroline=False,
+            fixedrange=True,
             title='Time Elapsed (sec)'
         ),
         yaxis=dict(
             range=[min(0, min(wind_val)),
                    max(45, max(wind_val)+max(wind_error))],
             showline=False,
+            fixedrange=True,
             zeroline=False,
             nticks=max(6, round(wind_val[-3]/10))
         ),
@@ -290,15 +292,17 @@ def gen_wind_histogram(old_figure, sliderValue, auto_state):
     )
     layout = Layout(
         xaxis=dict(
-            title='Wind Speed (mph), Rounded to Closest Integer',
+            title='Wind Speed (mph)',
             showgrid=False,
             showline=False,
+            fixedrange=True
         ),
         yaxis=dict(
             showgrid=False,
             showline=False,
             zeroline=False,
-            title='Number of Samples'
+            title='Number of Samples',
+            fixedrange=True
         ),
         margin=Margin(
             t=50,

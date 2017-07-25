@@ -71,9 +71,9 @@ app.layout = html.Div([
 
 
 @app.callback(Output('wind-speed', 'figure'), [],
-              [State('wind-speed', 'figure')],
+              [],
               [Event('wind-speed-update', 'interval')])
-def gen_wind_speed(old_figure):
+def gen_wind_speed():
     now = dt.datetime.now()
     sec = now.second
     minute = now.minute
@@ -193,10 +193,11 @@ def gen_wind_direction():
 
 @app.callback(Output('wind-histogram', 'figure'),
               [],
-              [State('bin-slider', 'value'),
+              [State('wind-speed', 'figure'),
+               State('bin-slider', 'value'),
                State('bin-auto', 'values')],
               [Event('wind-speed-update', 'interval')])
-def gen_wind_histogram(sliderValue, auto_state):
+def gen_wind_histogram(old_figure, sliderValue, auto_state):
     wind_val = []
     if old_figure is not None:
         wind_val = old_figure['data'][0]['y']
@@ -205,10 +206,10 @@ def gen_wind_histogram(sliderValue, auto_state):
                                int(round(max(wind_val)))))
     else:
         bin_val = np.histogram(wind_val, bins=sliderValue)
+
     avg_val = float(sum(wind_val))/len(wind_val)
     median_val = np.median(wind_val)
 
-    param = rayleigh.fit(bin_val[0])
     pdf_fitted = rayleigh.pdf(bin_val[1], loc=(avg_val)*0.55,
                               scale=(bin_val[1][-1] - bin_val[1][0])/3)
 
@@ -325,7 +326,7 @@ def gen_wind_histogram(sliderValue, auto_state):
 
 
 @app.callback(Output('bin-auto', 'values'), [Input('bin-slider', 'value')],
-              [],
+              [State('wind-speed', 'figure')],
               [Event('bin-slider', 'change')])
 def deselect_auto(sliderValue, old_figure):
     if (old_figure is not None and len(old_figure['data'][0]['y']) > 5):

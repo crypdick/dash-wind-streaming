@@ -160,7 +160,7 @@ def gen_wind_direction(old_figure):
 
     con = sqlite3.connect("wind-data.db")
     wind_orientation = pd.read_sql_query("SELECT * from Wind where rowid = " +
-                           str(total_time) + ";", con)
+                                         str(total_time) + ";", con)
 
     # Similar idea to that of the wind-speed graph, we are storing the data
     # inside the figure itself, since we are maintaining 202 elements in the
@@ -228,7 +228,7 @@ def gen_wind_histogram(old_figure, sliderValue, auto_state):
         wind_val = old_figure['data'][0]['y']
     if 'Auto' in auto_state:
         bin_val = np.histogram(wind_val, bins=range(int(round(min(wind_val))),
-                              int(round(max(wind_val)))))
+                               int(round(max(wind_val)))))
     else:
         bin_val = np.histogram(wind_val, bins=sliderValue)
     avg_val = float(sum(wind_val))/len(wind_val)

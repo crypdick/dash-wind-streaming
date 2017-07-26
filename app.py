@@ -330,8 +330,9 @@ def gen_wind_histogram(wind_speed_figure, sliderValue, auto_state):
 @app.callback(Output('bin-auto', 'values'), [Input('bin-slider', 'value')],
               [State('wind-speed', 'figure')],
               [Event('bin-slider', 'change')])
-def deselect_auto(sliderValue, old_figure):
-    if (old_figure is not None and len(old_figure['data'][0]['y']) > 5):
+def deselect_auto(sliderValue, wind_speed_figure):
+    if (wind_speed_figure is not None and
+       len(wind_speed_figure['data'][0]['y']) > 5):
         return ['']
     else:
         return ['Auto']

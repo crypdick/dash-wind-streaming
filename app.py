@@ -91,6 +91,7 @@ def gen_wind_speed():
         line=Line(
             color='#42C4F7'
         ),
+        hoverinfo='skip',
         error_y=ErrorY(
             type='data',
             array=df['SpeedError'],

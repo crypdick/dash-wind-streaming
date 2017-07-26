@@ -348,7 +348,6 @@ def deselect_auto(autoValue, sliderValue):
         return '# of Bins: ' + str(int(sliderValue))
 
 
-
 external_css = ["https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css",
                 "https://cdn.rawgit.com/plotly/dash-app-stylesheets/737dc4ab11f7a1a8d6b5645d26f69133d97062ae/dash-wind-streaming.css",
                 "https://fonts.googleapis.com/css?family=Raleway:400,400i,700,700i",

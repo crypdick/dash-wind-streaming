@@ -109,7 +109,8 @@ def gen_wind_speed():
             showline=False,
             zeroline=False,
             fixedrange=True,
-            autorange='reversed',
+            tickvals=[0, 50, 100, 150, 200],
+            ticktext=['200', '150', '100', '50', '0'],
             title='Time Elapsed (sec)'
         ),
         yaxis=dict(

@@ -230,7 +230,7 @@ def gen_wind_histogram(wind_speed_figure, sliderValue, auto_state):
         hoverinfo='x+y'
     )
     trace1 = Scatter(
-        x=[25],
+        x=[bin_val[int(len(bin_val)/2)]],
         y=[0],
         mode='lines',
         line=Line(
@@ -244,7 +244,7 @@ def gen_wind_histogram(wind_speed_figure, sliderValue, auto_state):
         name='Average'
     )
     trace2 = Scatter(
-        x=[25],
+        x=[bin_val[int(len(bin_val)/2)]],
         y=[0],
         line=Line(
             dash='dot',

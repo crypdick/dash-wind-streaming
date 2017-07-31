@@ -81,7 +81,7 @@ def gen_wind_speed():
 
     total_time = (hour * 3600) + (minute * 60) + (sec)
 
-    con = sqlite3.connect("wind-data.db")
+    con = sqlite3.connect("/data/wind-data.db")
     df = pd.read_sql_query('SELECT Speed, SpeedError, Direction from Wind where\
                             rowid > "{}" AND rowid <= "{}";'
                             .format(total_time-200, total_time), con)
@@ -143,7 +143,7 @@ def gen_wind_direction():
 
     total_time = (hour * 3600) + (minute * 60) + (sec)
 
-    con = sqlite3.connect("wind-data.db")
+    con = sqlite3.connect("/data/wind-data.db")
     df = pd.read_sql_query("SELECT * from Wind where rowid = " +
                                          str(total_time) + ";", con)
 

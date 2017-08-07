@@ -1,6 +1,8 @@
 **Dash Wind Streaming App**
 
-This app queries a SQL database every second and uses the data to update the wind speed diagram and the wind direction diagram. The wind speed values are then binned in real time to generate the wind histogram data.
+This app queries a SQL database every second and uses the data to update the wind speed diagram and the wind direction diagram. 
+
+The wind speed values are then binned in real time to generate the wind histogram plot.
 
 This app is hosted [here](https://dash-wind-streaming.herokuapp.com/dash/gallery/live-wind-data/)
 

@@ -28,7 +28,7 @@ app.layout = html.Div([
             html.H3("WIND SPEED (mph)")
         ], className='Title'),
         html.Div([
-            dcc.Graph(id='wind-speed'),
+            dcc.Graph(id='wind-speed', animate=True),
         ], className='twelve columns wind-speed'),
         dcc.Interval(id='wind-speed-update', interval=1000),
     ], className='row wind-speed-row'),

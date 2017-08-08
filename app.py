@@ -15,7 +15,8 @@ server = Flask('my app')
 server.secret_key = os.environ.get('secret_key', 'secret')
 
 app = dash.Dash('streaming-wind-app', server=server,
-                url_base_pathname='/dash/gallery/live-wind-data/')
+                url_base_pathname='/dash/gallery/live-wind-data/',
+                csrf_protect=False)
 
 app.layout = html.Div([
     html.Div([

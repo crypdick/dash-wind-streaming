@@ -30,7 +30,7 @@ app.layout = html.Div([
         html.Div([
             dcc.Graph(id='wind-speed'),
         ], className='twelve columns wind-speed'),
-        dcc.Interval(id='wind-speed-update', interval=1000),
+        dcc.Interval(id='wind-speed-update', interval=10000),
     ], className='row wind-speed-row'),
     html.Div([
         html.Div([

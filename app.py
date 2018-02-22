@@ -6,6 +6,7 @@ import plotly.plotly as py
 from plotly.graph_objs import *
 from scipy.stats import rayleigh
 from flask import Flask
+from flask_cors import CORS
 import numpy as np
 import pandas as pd
 import os
@@ -15,6 +16,7 @@ import datetime as dt
 app = dash.Dash('streaming-wind-app',
                 url_base_pathname='/dash/gallery/live-wind-data/')
 server = app.server
+CORS(server)
 if 'DYNO' in os.environ:
     app.config.routes_pathname_prefix = '/dash/gallery/live-wind-data/'
     app.config.requests_pathname_prefix = 'https://dash-wind-streaming.herokuapp.com/dash/gallery/live-wind-data/'

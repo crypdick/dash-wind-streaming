@@ -17,6 +17,9 @@ server.secret_key = os.environ.get('secret_key', 'secret')
 app = dash.Dash('streaming-wind-app', server=server,
                 url_base_pathname='/dash/gallery/live-wind-data/',
                 csrf_protect=False)
+if 'DYNO' in os.environ:
+    app.config.routes_pathname_prefix = '/dash/gallery/live-wind-data/'
+    app.config.requests_pathname_prefix = 'https://dash-wind-streaming.herokuapp.com/dash/gallery/live-wind-data/'
 
 app.layout = html.Div([
     html.Div([

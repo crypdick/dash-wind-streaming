@@ -12,7 +12,7 @@ import os
 import sqlite3
 import datetime as dt
 
-app = dash.Dash('streaming-wind-app', server=server,
+app = dash.Dash('streaming-wind-app',
                 url_base_pathname='/dash/gallery/live-wind-data/')
 server = app.server
 if 'DYNO' in os.environ:

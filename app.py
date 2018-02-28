@@ -6,17 +6,20 @@ import plotly.plotly as py
 from plotly.graph_objs import *
 from scipy.stats import rayleigh
 from flask import Flask
+from flask_cors import CORS
 import numpy as np
 import pandas as pd
 import os
 import sqlite3
 import datetime as dt
-server = Flask('my app')
-server.secret_key = os.environ.get('secret_key', 'secret')
 
-app = dash.Dash('streaming-wind-app', server=server,
-                url_base_pathname='/dash/gallery/live-wind-data/',
-                csrf_protect=False)
+app = dash.Dash('streaming-wind-app',
+                url_base_pathname='/dash/gallery/live-wind-data/')
+server = app.server
+CORS(server)
+if 'DYNO' in os.environ:
+    app.config.routes_pathname_prefix = '/dash/gallery/live-wind-data/'
+    app.config.requests_pathname_prefix = 'https://dash-wind-streaming.herokuapp.com/dash/gallery/live-wind-data/'
 
 app.layout = html.Div([
     html.Div([
@@ -30,7 +33,7 @@ app.layout = html.Div([
         html.Div([
             dcc.Graph(id='wind-speed'),
         ], className='twelve columns wind-speed'),
-        dcc.Interval(id='wind-speed-update', interval=10000),
+        dcc.Interval(id='wind-speed-update', interval=10000, n_intervals=0),
     ], className='row wind-speed-row'),
     html.Div([
         html.Div([
@@ -71,9 +74,7 @@ app.layout = html.Div([
           'boxShadow': '0px 0px 5px 5px rgba(204,204,204,0.4)'})
 
 
-@app.callback(Output('wind-speed', 'figure'), [],
-              [],
-              [Event('wind-speed-update', 'interval')])
+@app.callback(Output('wind-speed', 'figure'), [Input('wind-speed-update', 'n_intervals')])
 def gen_wind_speed():
     now = dt.datetime.now()
     sec = now.second
@@ -133,9 +134,7 @@ def gen_wind_speed():
     return Figure(data=[trace], layout=layout)
 
 
-@app.callback(Output('wind-direction', 'figure'), [],
-              [],
-              [Event('wind-speed-update', 'interval')])
+@app.callback(Output('wind-direction', 'figure'), [Input('wind-speed-update', 'n_intervals')])
 def gen_wind_direction():
     now = dt.datetime.now()
     sec = now.second
@@ -196,11 +195,10 @@ def gen_wind_direction():
 
 
 @app.callback(Output('wind-histogram', 'figure'),
-              [],
+              [Input('wind-speed-update', 'n_intervals')],
               [State('wind-speed', 'figure'),
                State('bin-slider', 'value'),
-               State('bin-auto', 'values')],
-              [Event('wind-speed-update', 'interval')])
+               State('bin-auto', 'values')])
 def gen_wind_histogram(wind_speed_figure, sliderValue, auto_state):
     wind_val = []
 
